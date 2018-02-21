@@ -1,0 +1,55 @@
+﻿<Window x:Class="NTRCheck.ImportCVSWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NTRCheck"
+		xmlns:ViewModels="clr-namespace:NTRCheck.ViewModels"
+		xmlns:ViewLib="clr-namespace:ViewLib;assembly=ViewLib"
+        mc:Ignorable="d" x:Name="root"
+		WindowStartupLocation="CenterOwner" ResizeMode="NoResize"  SizeToContent="Height"
+        Title="Import CVS" Width="250" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+
+	<Window.Resources>
+		<RoutedCommand x:Key="ok"/>
+		<RoutedCommand x:Key="cancel"/>
+
+		
+	</Window.Resources>
+
+	<Window.InputBindings>
+		<KeyBinding Key="Return" Command="{StaticResource ok}"/>
+		<KeyBinding Key="Esc" Command="{StaticResource cancel}"/>
+	</Window.InputBindings>
+
+	<Window.CommandBindings>
+		<CommandBinding Command="{StaticResource ok}" CanExecute="OKCommandBinding_CanExecute" Executed="OKCommandBinding_Executed"/>
+		<CommandBinding Command="{StaticResource cancel}" CanExecute="CancelCommandBinding_CanExecute" Executed="CancelCommandBinding_Executed"/>
+	</Window.CommandBindings>
+
+
+	<DockPanel>
+		<StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+			<Button Margin="4" Content="OK" Width="80" Command="{StaticResource ok}"/>
+			<Button Margin="4" Content="Cancel" Width="80" Command="{StaticResource cancel}"/>
+		</StackPanel>
+
+		<Grid DataContext="{Binding ElementName=root}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+			<ViewLib:BulletHeaderView Grid.Row="0" Grid.Column="0" Margin="2" DataContext="Start date" />
+			<ViewLib:BulletHeaderView Grid.Row="1" Grid.Column="0" Margin="2" DataContext="End date"/>
+			<DatePicker Grid.Row="0" Grid.Column="1" Margin="2" SelectedDate="{Binding StartDate}" />
+			<DatePicker Grid.Row="1" Grid.Column="1" Margin="2" SelectedDate="{Binding EndDate}"/>
+			
+		</Grid>
+		
+	</DockPanel>
+</Window>
+

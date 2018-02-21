@@ -4,9 +4,72 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NTRCheck"
+		xmlns:ViewModels="clr-namespace:NTRCheck.ViewModels"
+		xmlns:Views="clr-namespace:NTRCheck.Views"
+		xmlns:ViewLib="clr-namespace:ViewLib;assembly=ViewLib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+		Loaded="Window_Loaded"
+		WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip"
+        Title="NTR Check" Height="480" Width="640" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+	
+	<Window.Resources>
+		<Style x:Key="separatorStyle"
+           TargetType="{x:Type Border}">
+			<Setter Property="BorderThickness" Value="1,0,0,0"/>
+			<Setter Property="BorderBrush" Value="#FFC5C5C5"/>
+			<Setter Property="Margin" Value="2"/>
+			<Setter Property="Width" Value="2"/>
+			<Setter Property="Background" Value="White"/>
+		</Style>
+		
+		<DataTemplate DataType="{x:Type ViewModels:CaseViewModel}">
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="{Binding Description}"/>
+				<TextBlock Text=" on "/>
+				<TextBlock Text="{Binding CoreHostName}"/>
+			</StackPanel>
+		</DataTemplate>
+
+		<RoutedCommand x:Key="importCVS"/>
+	</Window.Resources>
+	
+	<Window.CommandBindings>
+		<CommandBinding Command="Open" CanExecute="OpenCommandBinding_CanExecute" Executed="OpenCommandBinding_Executed"/>
+		<CommandBinding Command="New" CanExecute="NewCommandBinding_CanExecute" Executed="NewCommandBinding_Executed"/>
+		<CommandBinding Command="{StaticResource importCVS}" CanExecute="ImportCVSCommandBinding_CanExecute" Executed="ImportCVSCommandBinding_Executed"/>
+	</Window.CommandBindings>
+	
+    <DockPanel>
+		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+			<Button Command="Open" ToolTip="Open case">
+				<Image Stretch="None" Source="Images/folder-open.png"/>
+			</Button>
+			<Button Command="New" ToolTip="New case">
+				<Image Stretch="None" Source="Images/folder--plus.png"/>
+			</Button>
+			<Border Style="{StaticResource separatorStyle}"/>
+			<Button Command="{StaticResource importCVS}" ToolTip="Import CVS">
+				<Image Stretch="None" Source="Images/database-import.png"/>
+			</Button>
+		</StackPanel>
+		
+		<StatusBar DockPanel.Dock="Bottom">
+			<ContentPresenter Content="{Binding CurrentCase,TargetNullValue=NA}"/>
+		</StatusBar>
+		
+		<Views:CVSView/>
+		
+		<!--Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="150"/>
+				<ColumnDefinition Width="5"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+
+			<ViewLib:CollectionView Grid.Column="0" ViewModelCollection="{Binding Cases}" />
+			<GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+			<Views:CVSView Grid.Column="2"/>
+		</-->
+		
+	</DockPanel>
 </Window>
