@@ -9,7 +9,7 @@
 		xmlns:ViewLib="clr-namespace:ViewLib;assembly=ViewLib"
         mc:Ignorable="d"
 		Loaded="Window_Loaded"
-		WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip"
+		WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip" WindowState="Maximized"
         Title="NTR Check" Height="480" Width="640" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 	
 	<Window.Resources>
@@ -31,12 +31,16 @@
 		</DataTemplate>
 
 		<RoutedCommand x:Key="importCVS"/>
+		<RoutedCommand x:Key="clearCVS"/>
+		<RoutedCommand x:Key="stop"/>
 	</Window.Resources>
 	
 	<Window.CommandBindings>
 		<CommandBinding Command="Open" CanExecute="OpenCommandBinding_CanExecute" Executed="OpenCommandBinding_Executed"/>
 		<CommandBinding Command="New" CanExecute="NewCommandBinding_CanExecute" Executed="NewCommandBinding_Executed"/>
 		<CommandBinding Command="{StaticResource importCVS}" CanExecute="ImportCVSCommandBinding_CanExecute" Executed="ImportCVSCommandBinding_Executed"/>
+		<CommandBinding Command="{StaticResource clearCVS}" CanExecute="ClearCVSCommandBinding_CanExecute" Executed="ClearCVSCommandBinding_Executed"/>
+		<CommandBinding Command="{StaticResource stop}" CanExecute="StopCommandBinding_CanExecute" Executed="StopCommandBinding_Executed"/>
 	</Window.CommandBindings>
 	
     <DockPanel>
@@ -51,13 +55,37 @@
 			<Button Command="{StaticResource importCVS}" ToolTip="Import CVS">
 				<Image Stretch="None" Source="Images/database-import.png"/>
 			</Button>
+			<Button Command="{StaticResource clearCVS}" ToolTip="Clear CVS">
+				<Image Stretch="None" Source="Images/bin.png"/>
+			</Button>
+			<Button Command="{StaticResource stop}" ToolTip="Stop">
+				<Image Stretch="None" Source="Images/control-stop-square.png"/>
+			</Button>
 		</StackPanel>
 		
 		<StatusBar DockPanel.Dock="Bottom">
-			<ContentPresenter Content="{Binding CurrentCase,TargetNullValue=NA}"/>
+			<ContentPresenter Content="{Binding CVSs.Case,FallbackValue=NA}"/>
+			<Border Height="12" Style="{StaticResource separatorStyle}"/>
+			<TextBlock Text="Status: "/>
+			<TextBlock Text="{Binding CVSs.Status,FallbackValue=NA}"/>
+			<StackPanel Orientation="Horizontal">
+				<StackPanel.Style>
+					<Style TargetType="{x:Type StackPanel}">
+						<Setter Property="Visibility" Value="Collapsed"/>
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding CVSs.Status}" Value="Running">
+								<Setter Property="Visibility" Value="Visible"/>
+							</DataTrigger>
+							
+						</Style.Triggers>
+					</Style>
+				</StackPanel.Style>
+				<ProgressBar Width="100" Value="{Binding CVSs.Progress}" Maximum="100" Height="12" VerticalAlignment="Center"/>
+			</StackPanel>
+			<Border Height="12" Style="{StaticResource separatorStyle}"/>
 		</StatusBar>
 		
-		<Views:CVSView/>
+		<Views:MainView ViewModelCollection="{Binding CVSs}"/>
 		
 		<!--Grid>
 			<Grid.ColumnDefinitions>

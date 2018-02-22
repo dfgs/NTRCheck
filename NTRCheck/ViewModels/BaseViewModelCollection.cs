@@ -30,7 +30,7 @@ namespace NTRCheck.ViewModels
 			return new ModelType();
 		}
 
-		public async Task LoadAsync()
+		public virtual async Task LoadAsync()
 		{
 			IEnumerable<ModelType> model;
 
@@ -53,7 +53,12 @@ namespace NTRCheck.ViewModels
 
 		protected override async Task OnAddModelAsync(ModelType Model, int Index)
 		{
-			await Task.Run( ()=> Server.ExecuteNonQuery(new Insert<ModelType>(Model)) );
+			object key;
+
+			await Task.Run( ()=> {
+				key=Server.ExecuteTransaction(new Insert<ModelType>(Model), new SelectIdentity());
+				Table<ModelType>.PrimaryKey.SetValue(Model, Convert.ToInt32( key));
+			});
 		}
 		protected override async Task OnRemoveModelAsync(ModelType Model, int Index)
 		{
@@ -63,6 +68,6 @@ namespace NTRCheck.ViewModels
 		{
 			await Task.Run(() => Server.ExecuteNonQuery(new Update<ModelType>(Model)));
 		}
-
+		
 	}
 }

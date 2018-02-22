@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MVVM", "MVVM", "{485E66A9-5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewLib", "..\ViewLib\ViewLib\ViewLib.csproj", "{BE2D656E-7805-4288-ADC7-479B75CA112D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aga.Controls", "..\TreeListView-master\Aga.Controls\Aga.Controls.csproj", "{D17CD489-1B14-47EB-8C22-C189D078AEC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{BE2D656E-7805-4288-ADC7-479B75CA112D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE2D656E-7805-4288-ADC7-479B75CA112D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE2D656E-7805-4288-ADC7-479B75CA112D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D17CD489-1B14-47EB-8C22-C189D078AEC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D17CD489-1B14-47EB-8C22-C189D078AEC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D17CD489-1B14-47EB-8C22-C189D078AEC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D17CD489-1B14-47EB-8C22-C189D078AEC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

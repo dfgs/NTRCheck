@@ -4,7 +4,55 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NTRCheck.Views"
-             mc:Ignorable="d" 
+			 xmlns:ViewLib="clr-namespace:ViewLib;assembly=ViewLib"
+             mc:Ignorable="d" x:Name="root"
              d:DesignHeight="300" d:DesignWidth="300">
-	<ListView/>
+	<UserControl.Resources>
+		<Style TargetType="{x:Type ViewLib:TagView}">
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="Background" Value="LightGray"/>
+			<Setter Property="Width" Value="40"/>
+			<Setter Property="TagBrush" Value="Goldenrod"/>
+			<Style.Triggers>
+				<Trigger Property="TagContent" Value="CDR">
+					<Setter Property="Background" Value="Gray"/>
+				</Trigger>
+				<Trigger Property="TagContent" Value="VOX">
+					<Setter Property="Background" Value="LightGray"/>
+					<Setter Property="Foreground" Value="Black"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+	</UserControl.Resources>
+
+	<DockPanel DataContext="{Binding ElementName=root,Path=ViewModelCollection}">
+		<ViewLib:ErrorView DockPanel.Dock="Top" ErrorMessage="{Binding ErrorMessage,Mode=TwoWay}" />
+		<ListView ItemsSource="{Binding}" SelectedItem="{Binding SelectedItem}" ViewLib:Sort.IsEnabled="True">
+			<ListView.ItemContainerStyle>
+				<Style TargetType="{x:Type ListViewItem}">
+					<Setter Property="IsSelected" Value="{Binding IsSelected}"/>
+				</Style>
+			</ListView.ItemContainerStyle>
+			<ListView.View>
+				<GridView>
+					<GridViewColumn Width="100" Header="CVSKEY" DisplayMemberBinding="{Binding CVSKEY}" />
+					<GridViewColumn Width="100" Header="CVSTYP" ViewLib:Sort.By="CVSTYP">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<ViewLib:TagView TagContent="{Binding CVSTYP}" />
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+					<GridViewColumn Width="100" Header="CVSUSR" DisplayMemberBinding="{Binding CVSUSR}" />
+					<GridViewColumn Width="100" Header="CVSCHN" DisplayMemberBinding="{Binding CVSCHN}" />
+					<GridViewColumn Width="150" Header="UtcStartTime" DisplayMemberBinding="{Binding UtcStartTime}" />
+					<GridViewColumn Width="150" Header="UtcEndTime" DisplayMemberBinding="{Binding UtcEndTime}" />
+					<GridViewColumn Width="150" Header="CVSSDT" DisplayMemberBinding="{Binding CVSSDT}" />
+					<GridViewColumn Width="150" Header="CVSEDT" DisplayMemberBinding="{Binding CVSEDT}" />
+					<GridViewColumn Width="100" Header="CVSC05" DisplayMemberBinding="{Binding CVSC05}" />
+				</GridView>
+			</ListView.View>
+		</ListView>
+	</DockPanel>
+	
 </UserControl>

@@ -18,26 +18,26 @@ namespace NTRCheck.ViewModels
 			private set;
 		}
 
+
+		public static readonly DependencyProperty CVSsProperty = DependencyProperty.Register("CVSs", typeof(CVSViewModelCollection), typeof(AppViewModel));
 		public CVSViewModelCollection CVSs
 		{
-			get;
-			private set;
+			get { return (CVSViewModelCollection)GetValue(CVSsProperty); }
+			set { SetValue(CVSsProperty, value); }
 		}
+		
 
-
-		public static readonly DependencyProperty CurrentCaseProperty = DependencyProperty.Register("CurrentCase", typeof(CaseViewModel), typeof(AppViewModel));
+		/*public static readonly DependencyProperty CurrentCaseProperty = DependencyProperty.Register("CurrentCase", typeof(CaseViewModel), typeof(AppViewModel));
 		public CaseViewModel CurrentCase
 		{
 			get { return (CaseViewModel)GetValue(CurrentCaseProperty); }
 			set { SetValue(CurrentCaseProperty, value); }
-		}
+		}*/
 
 
 		public AppViewModel(ILogger Logger, IServer Server) : base(Logger)
 		{
-			CurrentCase = null;
 			Cases = new CaseViewModelCollection(Logger,Server);
-			CVSs = new CVSViewModelCollection(Logger,Server);
 		}
 
 		protected override async Task OnLoadedAsync(string Model)

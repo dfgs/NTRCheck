@@ -107,18 +107,18 @@ namespace NTRCheck
 		}
 		private void NewCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = true;e.Handled = true;
-			return;
+			e.Handled = true; e.CanExecute = (appViewModel?.CVSs==null) || (appViewModel?.CVSs?.Status == Statuses.Idle); 
 		}
 
 		
 		private async void NewCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
+			CaseViewModel Case;
 			try
 			{
-				appViewModel.CurrentCase= await appViewModel.Cases.AddAsync(OnEditViewModel);
-				await appViewModel.CVSs.UnloadAsync();
-				await appViewModel.CVSs.LoadAsync(appViewModel.CurrentCase.CaseID.Value);
+				Case= await appViewModel.Cases.AddAsync(OnEditViewModel);
+				appViewModel.CVSs = new CVSViewModelCollection(logger, localServer, Case);
+				await appViewModel.CVSs.LoadAsync();
 			}
 			catch (Exception ex)
 			{
@@ -129,7 +129,7 @@ namespace NTRCheck
 
 		private void OpenCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = true; e.Handled = true;
+			e.Handled = true; e.CanExecute = (appViewModel?.CVSs == null) || (appViewModel?.CVSs?.Status == Statuses.Idle); 
 			return;
 		}
 
@@ -146,9 +146,10 @@ namespace NTRCheck
 				if (!window.ShowDialog() ?? false) return;
 
 				if (appViewModel.Cases.SelectedItem == null) return;
-				appViewModel.CurrentCase = appViewModel.Cases.SelectedItem;
-				await appViewModel.CVSs.UnloadAsync();
-				await appViewModel.CVSs.LoadAsync(appViewModel.CurrentCase.CaseID.Value);
+				
+				appViewModel.CVSs = new CVSViewModelCollection(logger, localServer, appViewModel.Cases.SelectedItem);
+				await appViewModel.CVSs.LoadAsync();
+
 			}
 			catch (Exception ex)
 			{
@@ -157,33 +158,67 @@ namespace NTRCheck
 			}
 		}
 
+		private void StopCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = (appViewModel?.CVSs != null) && (appViewModel?.CVSs?.Status == Statuses.Running);
+		}
+
+
+		private async void StopCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			await appViewModel.CVSs.StopAsync();
+		}
 
 		private void ImportCVSCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = appViewModel?.CurrentCase!=null; e.Handled = true;
-			return;
+			e.Handled = true; e.CanExecute = (appViewModel?.CVSs!=null) && (appViewModel?.CVSs?.Status == Statuses.Idle) && (appViewModel?.CVSs?.IsLoading == false); 
 		}
 
 
 		private async void ImportCVSCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			ImportCVSWindow window;
+			TimeSpan elapsed;
 
 			try
 			{
 				window = new ImportCVSWindow();
 				window.Owner = this;
+				window.StartDate = new DateTime(2015, 10, 13);
+				window.EndDate = new DateTime(2015, 10, 13);
 				if (!window.ShowDialog() ?? false) return;
 
-				await appViewModel.CVSs.LoadAsync(window.StartDate, window.EndDate);
+				elapsed=await appViewModel.CVSs.ImportAsync(window.StartDate, window.EndDate);
+				MessageBox.Show(this, $"CVS imported in {elapsed}", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
 			}
-			catch (Exception ex)
+			catch
 			{
-				ShowError(ex);
+				appViewModel.CVSs.ErrorMessage = "Failed to import CVS";
 				return;
 			}
 		}
+		private void ClearCVSCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = appViewModel?.CVSs?.CanClear()??false;
+		}
 
+		private bool ClearCallBack()
+		{
+			return MessageBox.Show(this, "Do you want to clear all item(s)", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+		}
+		private async void ClearCVSCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+
+			try
+			{
+				await appViewModel.CVSs.ClearAsync(ClearCallBack);
+			}
+			catch
+			{
+				appViewModel.CVSs.ErrorMessage = "Failed to clear CVS";
+				return;
+			}
+		}
 
 
 

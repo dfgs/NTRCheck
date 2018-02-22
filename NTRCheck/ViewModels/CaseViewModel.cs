@@ -66,15 +66,17 @@ namespace NTRCheck.ViewModels
 
 		protected override async Task OnLoadedAsync(Case Model)
 		{
+			await base.OnLoadedAsync(Model);
+
 			IConnectionFactory connectionFactory;
 			ICommandFactory commandFactory;
 
-			connectionFactory = new MySqlConnectionFactory(CoreHostName, "recorder", MySqlLogin, MySqlPassword);
+			connectionFactory = new MySqlConnectionFactory(Model.CoreHostName, "recorder", Model.MySqlLogin, Model.MySqlPassword);
 			commandFactory = new MySqlCommandFactory();
 
 			Server = new Server(connectionFactory, commandFactory);
 
-			await Task.Yield();
+			
 		}
 
 	}

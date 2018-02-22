@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace NTRCheck.Models
 {
+	[Table("cvs")]
 	public class CVS
 	{
 		public static readonly Column<CVS, int?> CVSIDColumn = new Column<CVS, int?>() { IsPrimaryKey = true, IsIdentity = true };
@@ -22,6 +23,15 @@ namespace NTRCheck.Models
 			get { return CaseIDColumn.GetValue(this); }
 			set { CaseIDColumn.SetValue(this, value); }
 		}
+
+
+		public static readonly Column<CVS, int?> ParentCVSIDColumn = new Column<CVS, int?>() { IsNullable=true }; 
+		public int? ParentCVSID
+		{
+			get { return ParentCVSIDColumn.GetValue(this); }
+			set { ParentCVSIDColumn.SetValue(this, value); }
+		}
+
 
 
 		public static readonly Column<CVS, int?> CVSKEYColumn = new Column<CVS, int?>();

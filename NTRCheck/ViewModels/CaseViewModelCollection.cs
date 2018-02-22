@@ -22,5 +22,10 @@ namespace NTRCheck.ViewModels
 			return new CaseViewModel(Logger);
 		}
 
+		protected override Task OnClearModelAsync()
+		{
+			throw new NotImplementedException();
+		}
+
 	}
 }
