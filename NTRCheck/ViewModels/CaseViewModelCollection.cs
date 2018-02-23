@@ -22,10 +22,24 @@ namespace NTRCheck.ViewModels
 			return new CaseViewModel(Logger);
 		}
 
-		protected override Task OnClearModelAsync()
+		
+
+		public virtual async Task LoadAsync()
 		{
-			throw new NotImplementedException();
+			IEnumerable<Case> model;
+
+			try
+			{
+				model = Server.Execute<Case>(new Select<Case>());
+			}
+			catch (Exception ex)
+			{
+				Log(ex);
+				throw (ex);
+			}
+			await LoadAsync(model);
 		}
+
 
 	}
 }

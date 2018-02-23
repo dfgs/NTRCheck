@@ -32,6 +32,6 @@
 		</StackPanel>
 		<Views:CVSView Grid.Row="1" ViewModelCollection="{Binding}"/>
 		<GridSplitter Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-		<Views:CVSView Grid.Row="3"/>
+		<Views:CVSView Grid.Row="3" ViewModelCollection="{Binding SelectedItem.VOXs}"/>
 	</Grid>
 </UserControl>

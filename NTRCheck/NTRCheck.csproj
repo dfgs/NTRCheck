@@ -61,9 +61,12 @@
     <Compile Include="OpenCaseWindow.xaml.cs">
       <DependentUpon>OpenCaseWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\AppViewModel.cs" />
     <Compile Include="ViewModels\CaseViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModelCollection.cs" />
+    <Compile Include="ViewModels\VOXViewModel.cs" />
+    <Compile Include="ViewModels\CDRViewModelCollection.cs" />
+    <Compile Include="ViewModels\CDRViewModel.cs" />
+    <Compile Include="ViewModels\VOXViewModelCollection.cs" />
     <Compile Include="ViewModels\CVSViewModelCollection.cs" />
     <Compile Include="ViewModels\CaseViewModelCollection.cs" />
     <Compile Include="ViewModels\CVSViewModel.cs" />
@@ -147,10 +150,6 @@
       <Project>{f1336688-ce9c-46fb-b3f4-4f1db2603e22}</Project>
       <Name>NORMLib.MySql</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\NORMLib\NORMLib.SqlCE\NORMLib.SqlCE.csproj">
-      <Project>{3ad31b3c-b15a-498b-924c-0880085bc072}</Project>
-      <Name>NORMLib.SqlCE</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\NORMLib\NORMLib.VersionControl\NORMLib.VersionControl.csproj">
       <Project>{2b6670be-c745-46ff-88cb-9d05cf0c7c6b}</Project>
       <Name>NORMLib.VersionControl</Name>
@@ -158,10 +157,6 @@
     <ProjectReference Include="..\..\NORMLib\NORMLib\NORMLib.csproj">
       <Project>{7f0b3eb2-8e53-49e8-9231-e3115ace6e05}</Project>
       <Name>NORMLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\TreeListView-master\Aga.Controls\Aga.Controls.csproj">
-      <Project>{d17cd489-1b14-47eb-8c22-c189d078aec9}</Project>
-      <Name>Aga.Controls</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ViewLib\ViewLib\ViewLib.csproj">
       <Project>{be2d656e-7805-4288-adc7-479b75ca112d}</Project>
@@ -191,6 +186,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\bin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\arrow-join.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

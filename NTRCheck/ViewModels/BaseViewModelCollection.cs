@@ -14,15 +14,15 @@ namespace NTRCheck.ViewModels
 		where ViewModelType:ViewModel<ModelType>
 		where ModelType:new()
 	{
-		public IServer Server
+		/*public IServer Server
 		{
 			get;
 			private set;
-		}
+		}*/
 
-		public BaseViewModelCollection(ILogger Logger,IServer Server) : base(Logger)
+		public BaseViewModelCollection(ILogger Logger) : base(Logger)
 		{
-			this.Server = Server;
+			//this.Server = Server;
 		}
 
 		protected override ModelType OnCreateModel()
@@ -30,21 +30,7 @@ namespace NTRCheck.ViewModels
 			return new ModelType();
 		}
 
-		public virtual async Task LoadAsync()
-		{
-			IEnumerable<ModelType> model;
-
-			try
-			{
-				 model= Server.Execute<ModelType>(new Select<ModelType>());
-			}
-			catch(Exception ex)
-			{
-				Log(ex);
-				throw (ex);
-			}
-			await LoadAsync(model);			
-		}
+		
 
 		protected override bool OnAreModelsAreEquals(ModelType A, ModelType B)
 		{

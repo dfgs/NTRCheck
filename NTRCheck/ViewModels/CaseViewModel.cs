@@ -51,33 +51,35 @@ namespace NTRCheck.ViewModels
 		}
 
 
-
-		public static readonly DependencyProperty ServerProperty = DependencyProperty.Register("Server", typeof(IServer), typeof(CaseViewModel));
-		public IServer Server
+		public CDRViewModelCollection CDRs
 		{
-			get { return (IServer)GetValue(ServerProperty); }
-			set { SetValue(ServerProperty, value); }
+			get;
+			private set;
 		}
+
 
 
 		public CaseViewModel(ILogger Logger) : base(Logger)
 		{
+			CDRs = new CDRViewModelCollection(Logger);
 		}
 
 		protected override async Task OnLoadedAsync(Case Model)
 		{
 			await base.OnLoadedAsync(Model);
-
+			await CDRs.LoadAsync(this);
+		}
+		public IServer CreateServer()
+		{
 			IConnectionFactory connectionFactory;
 			ICommandFactory commandFactory;
 
 			connectionFactory = new MySqlConnectionFactory(Model.CoreHostName, "recorder", Model.MySqlLogin, Model.MySqlPassword);
 			commandFactory = new MySqlCommandFactory();
 
-			Server = new Server(connectionFactory, commandFactory);
-
-			
+			return new Server(connectionFactory, commandFactory);
 		}
+		
 
 	}
 

@@ -1,4 +1,5 @@
 ﻿using LogLib;
+using NORMLib;
 using NTRCheck.Models;
 using System;
 using System.Collections.Generic;
@@ -9,13 +10,30 @@ using ViewModelLib;
 
 namespace NTRCheck.ViewModels
 {
-	public class CVSViewModel : ViewModel<CVS>
+	public abstract class CVSViewModel : ViewModel<CVS>
 	{
+		public int? CVSID
+		{
+			get { return Model.CVSID; }
+			set { Model.CVSID = value; OnPropertyChanged(); }
+		}
+		public int? CaseID
+		{
+			get { return Model.CaseID; }
+			set { Model.CaseID = value; OnPropertyChanged(); }
+		}
+		public int? ParentCVSID
+		{
+			get { return Model.ParentCVSID; }
+			set { Model.ParentCVSID = value; OnPropertyChanged(); }
+		}
+
 		public int? CVSKEY
 		{
 			get { return Model.CVSKEY; }
 			set { Model.CVSKEY=value;OnPropertyChanged(); }
 		}
+
 
 		public int? CVSUSR
 		{
@@ -65,9 +83,19 @@ namespace NTRCheck.ViewModels
 			set { Model.CVSC05=value;OnPropertyChanged(); }
 		}
 
+		
+
+		/*public IServer Server
+		{
+			get;
+			private set;
+		}*/
 
 		public CVSViewModel(ILogger Logger) : base(Logger)
 		{
+			//this.Server = Server;
 		}
+		
+
 	}
 }
