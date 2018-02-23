@@ -7,8 +7,7 @@
 		xmlns:ViewModels="clr-namespace:NTRCheck.ViewModels"
 		xmlns:Views="clr-namespace:NTRCheck.Views"
 		xmlns:ViewLib="clr-namespace:ViewLib;assembly=ViewLib"
-        mc:Ignorable="d"
-		Loaded="Window_Loaded"
+        mc:Ignorable="d" x:Name="root"
 		WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip" WindowState="Maximized"
         Title="NTR Check" Height="480" Width="640" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 	
@@ -22,36 +21,35 @@
 			<Setter Property="Background" Value="White"/>
 		</Style>
 		
-		<DataTemplate DataType="{x:Type ViewModels:CaseViewModel}">
-			<StackPanel Orientation="Horizontal">
-				<TextBlock Text="{Binding Description}"/>
-				<TextBlock Text=" on "/>
-				<TextBlock Text="{Binding CoreHostName}"/>
-			</StackPanel>
-		</DataTemplate>
 
 		<RoutedCommand x:Key="importCVS"/>
 		<RoutedCommand x:Key="clearCVS"/>
 		<RoutedCommand x:Key="associateCVS"/>
+		<RoutedCommand x:Key="analyseCVS"/>
 		<RoutedCommand x:Key="stop"/>
 	</Window.Resources>
 	
 	<Window.CommandBindings>
 		<CommandBinding Command="Open" CanExecute="OpenCommandBinding_CanExecute" Executed="OpenCommandBinding_Executed"/>
 		<CommandBinding Command="New" CanExecute="NewCommandBinding_CanExecute" Executed="NewCommandBinding_Executed"/>
+		<CommandBinding Command="Save" CanExecute="SaveCommandBinding_CanExecute" Executed="SaveCommandBinding_Executed"/>
 		<CommandBinding Command="{StaticResource importCVS}" CanExecute="ImportCVSCommandBinding_CanExecute" Executed="ImportCVSCommandBinding_Executed"/>
 		<CommandBinding Command="{StaticResource clearCVS}" CanExecute="ClearCVSCommandBinding_CanExecute" Executed="ClearCVSCommandBinding_Executed"/>
 		<CommandBinding Command="{StaticResource associateCVS}" CanExecute="AssociateCVSCommandBinding_CanExecute" Executed="AssociateCVSCommandBinding_Executed"/>
+		<CommandBinding Command="{StaticResource analyseCVS}" CanExecute="AnalyseCVSCommandBinding_CanExecute" Executed="AnalyseCVSCommandBinding_Executed"/>
 		<CommandBinding Command="{StaticResource stop}" CanExecute="StopCommandBinding_CanExecute" Executed="StopCommandBinding_Executed"/>
 	</Window.CommandBindings>
 	
-    <DockPanel>
+    <DockPanel DataContext="{Binding ElementName=root,Path=CaseViewModel}">
 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
 			<Button Command="Open" ToolTip="Open case">
 				<Image Stretch="None" Source="Images/folder-open.png"/>
 			</Button>
 			<Button Command="New" ToolTip="New case">
 				<Image Stretch="None" Source="Images/folder--plus.png"/>
+			</Button>
+			<Button Command="Save" ToolTip="Save case">
+				<Image Stretch="None" Source="Images/disk-return.png"/>
 			</Button>
 			<Border Style="{StaticResource separatorStyle}"/>
 			<Button Command="{StaticResource importCVS}" ToolTip="Import CVS">
@@ -60,38 +58,50 @@
 			<Button Command="{StaticResource clearCVS}" ToolTip="Clear CVS">
 				<Image Stretch="None" Source="Images/bin.png"/>
 			</Button>
+			<Border Style="{StaticResource separatorStyle}"/>
 			<Button Command="{StaticResource associateCVS}" ToolTip="Associate CVS">
 				<Image Stretch="None" Source="Images/arrow-join.png"/>
 			</Button>
+			<Button Command="{StaticResource analyseCVS}" ToolTip="Analyse CVS">
+				<Image Stretch="None" Source="Images/bug.png"/>
+			</Button>
+			<Border Style="{StaticResource separatorStyle}"/>
 			<Button Command="{StaticResource stop}" ToolTip="Stop">
 				<Image Stretch="None" Source="Images/control-stop-square.png"/>
 			</Button>
 		</StackPanel>
 		
-		<StatusBar DockPanel.Dock="Bottom" DataContext="{Binding CDRs}">
-			<ContentPresenter Content="{Binding Case,FallbackValue=NA}"/>
+		<StatusBar DockPanel.Dock="Bottom">
+			<ContentPresenter Content="{Binding CoreHostName, TargetNullValue=NA,FallbackValue=NA}"/>
 			<Border Height="12" Style="{StaticResource separatorStyle}"/>
 			<TextBlock Text="Status: "/>
-			<TextBlock Text="{Binding Status,FallbackValue=NA}"/>
+			<TextBlock Text="{Binding CDRs.Status,FallbackValue=NA}"/>
 			<StackPanel Orientation="Horizontal">
 				<StackPanel.Style>
 					<Style TargetType="{x:Type StackPanel}">
 						<Setter Property="Visibility" Value="Collapsed"/>
 						<Style.Triggers>
-							<DataTrigger Binding="{Binding Status}" Value="Running">
+							<DataTrigger Binding="{Binding CDRs.Status}" Value="Running">
 								<Setter Property="Visibility" Value="Visible"/>
 							</DataTrigger>
 							
 						</Style.Triggers>
 					</Style>
 				</StackPanel.Style>
-				<ProgressBar Width="100" Value="{Binding Progress}" Maximum="100" Height="12" VerticalAlignment="Center"/>
+				<ProgressBar Width="100" Value="{Binding CDRs.Progress}" Maximum="100" Height="12" VerticalAlignment="Center"/>
 			</StackPanel>
 			<Border Height="12" Style="{StaticResource separatorStyle}"/>
 		</StatusBar>
-		
-		<Views:MainView ViewModelCollection="{Binding CDRs}"/>
-		
+
+		<Border Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}">
+			<ContentControl Content="{Binding}">
+				<ContentControl.Resources>
+					<DataTemplate DataType="{x:Type ViewModels:CaseViewModel}">
+						<Views:CaseView/>
+					</DataTemplate>
+				</ContentControl.Resources>
+			</ContentControl>
+		</Border>
 		<!--Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="150"/>

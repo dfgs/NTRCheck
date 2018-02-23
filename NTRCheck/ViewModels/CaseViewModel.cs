@@ -4,10 +4,12 @@ using NORMLib.MySql;
 using NTRCheck.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Xml.Serialization;
 using ViewModelLib;
 using ViewModelLib.Attributes;
 
@@ -15,12 +17,14 @@ namespace NTRCheck.ViewModels
 {
 	public class CaseViewModel : ViewModel<Case>
 	{
-		
-		public int? CaseID
+
+		public static readonly DependencyProperty FileNameProperty = DependencyProperty.Register("FileName", typeof(string), typeof(CaseViewModel));
+		public string FileName
 		{
-			get { return Model.CaseID; }
-			set { Model.CaseID = value;OnPropertyChanged(); }
+			get { return (string)GetValue(FileNameProperty); }
+			set { SetValue(FileNameProperty, value); }
 		}
+
 
 		[Editable(IsMandatory = true)]
 		public string Description
@@ -51,7 +55,7 @@ namespace NTRCheck.ViewModels
 		}
 
 
-		public CDRViewModelCollection CDRs
+		public CVSViewModelCollection CDRs
 		{
 			get;
 			private set;
@@ -61,14 +65,42 @@ namespace NTRCheck.ViewModels
 
 		public CaseViewModel(ILogger Logger) : base(Logger)
 		{
-			CDRs = new CDRViewModelCollection(Logger);
+			CDRs = new CVSViewModelCollection(Logger);
 		}
 
 		protected override async Task OnLoadedAsync(Case Model)
 		{
 			await base.OnLoadedAsync(Model);
-			await CDRs.LoadAsync(this);
+			await CDRs.LoadAsync(Model.CDRs);
 		}
+
+
+		public async Task LoadAsync(string FileName)
+		{
+			XmlSerializer serializer;
+			Case model;
+
+			this.FileName = FileName;
+			try
+			{
+				using (FileStream stream = new FileStream(FileName, FileMode.Open))
+				{
+					serializer = new XmlSerializer(typeof(Case));
+					model=(Case)serializer.Deserialize(stream);
+					stream.Flush();
+				}
+			}
+			catch (Exception ex)
+			{
+				Log(ex);
+				throw (ex);
+			}
+			finally
+			{
+			}
+			await LoadAsync(model);
+		}
+
 		public IServer CreateServer()
 		{
 			IConnectionFactory connectionFactory;
@@ -79,7 +111,34 @@ namespace NTRCheck.ViewModels
 
 			return new Server(connectionFactory, commandFactory);
 		}
-		
+
+
+
+		public void Save()
+		{
+			XmlSerializer serializer;
+
+			try
+			{
+				using (FileStream stream = new FileStream(FileName,FileMode.Create))
+				{
+					serializer = new XmlSerializer(typeof(Case));
+					serializer.Serialize(stream, Model);
+					stream.Flush();
+				}
+			}
+			catch (Exception ex)
+			{
+				Log(ex);
+				throw (ex);
+			}
+			finally
+			{
+			}
+
+		}
+
+
 
 	}
 

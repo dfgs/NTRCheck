@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="NTRCheck.Views.CaseView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Views="clr-namespace:NTRCheck.Views"
+			 xmlns:ViewLib="clr-namespace:ViewLib;assembly=ViewLib"
+             mc:Ignorable="d" x:Name="root" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+             d:DesignHeight="300" d:DesignWidth="300">
+
+	<DockPanel>
+		<ViewLib:ErrorView DockPanel.Dock="Top" ErrorMessage="{Binding ErrorMessage,Mode=TwoWay}"/>
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="5"/>
+				<RowDefinition Height="200"/>
+			</Grid.RowDefinitions>
+			<Views:CVSView Grid.Row="0" ViewModelCollection="{Binding CDRs}"/>
+			<GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+			<Views:CVSView Grid.Row="2" ViewModelCollection="{Binding CDRs.SelectedItem.VOXs}"/>
+		</Grid>
+	</DockPanel>
+</UserControl>

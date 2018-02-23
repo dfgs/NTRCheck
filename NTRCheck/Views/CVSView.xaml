@@ -8,7 +8,10 @@
              mc:Ignorable="d" x:Name="root"
              d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
+		<RoutedCommand x:Key="remove"/>
+
 		<Style TargetType="{x:Type ViewLib:TagView}">
+			<Setter Property="ToolTip" Value="{Binding Status}"/>
 			<Setter Property="Foreground" Value="White"/>
 			<Setter Property="Background" Value="LightGray"/>
 			<Setter Property="Width" Value="40"/>
@@ -21,11 +24,31 @@
 					<Setter Property="Background" Value="LightGray"/>
 					<Setter Property="Foreground" Value="Black"/>
 				</Trigger>
+				<DataTrigger Binding="{Binding Status}" Value="Valid">
+					<Setter Property="TagBrush" Value="Green"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding Status}" Value="Orphaned">
+					<Setter Property="TagBrush" Value="OrangeRed"/>
+				</DataTrigger>
 			</Style.Triggers>
 		</Style>
 	</UserControl.Resources>
 
+	<UserControl.InputBindings>
+		<KeyBinding Command="{StaticResource remove}" Key="Delete"/>
+	</UserControl.InputBindings>
+
+	<UserControl.CommandBindings>
+		<CommandBinding Command="{StaticResource remove}" CanExecute="RemoveCommandBinding_CanExecute" Executed="RemoveCommandBinding_Executed"/>
+	</UserControl.CommandBindings>
+
+	
 	<DockPanel DataContext="{Binding ElementName=root,Path=ViewModelCollection}">
+		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+			<Button ToolTip="Remove" Command="{StaticResource remove}">
+				<Image Source="/NTRCheck;component/Images/delete.png" Stretch="None"/>
+			</Button>
+		</StackPanel>
 		<ViewLib:ErrorView DockPanel.Dock="Top" ErrorMessage="{Binding ErrorMessage,Mode=TwoWay}" />
 		<ListView ItemsSource="{Binding}" SelectedItem="{Binding SelectedItem}" ViewLib:Sort.IsEnabled="True">
 			<ListView.ItemContainerStyle>

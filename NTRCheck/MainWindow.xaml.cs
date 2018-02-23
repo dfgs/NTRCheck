@@ -18,6 +18,7 @@ using LogLib;
 using NTRCheck.ViewModels;
 using ViewLib;
 using NTRCheck.Models;
+using Microsoft.Win32;
 
 namespace NTRCheck
 {
@@ -26,9 +27,16 @@ namespace NTRCheck
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-
 		private ILogger logger;
-		
+
+		public static readonly DependencyProperty CaseViewModelProperty = DependencyProperty.Register("CaseViewModel", typeof(CaseViewModel), typeof(MainWindow));
+		public CaseViewModel CaseViewModel
+		{
+			get { return (CaseViewModel)GetValue(CaseViewModelProperty); }
+			private set { SetValue(CaseViewModelProperty, value); }
+		}
+
+
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -42,49 +50,7 @@ namespace NTRCheck
 			MessageBox.Show(this, ex.Message, "Error occured");
 		}
 
-		private async void Window_Loaded(object sender, RoutedEventArgs e)
-		{
-			DBVersionController versionController;
-
-			#region create local database
-			if (!System.IO.File.Exists(localDBFileName))
-			{
-				try
-				{
-					System.IO.File.Create(localDBFileName).Close();
-				}
-				catch(Exception ex)
-				{
-					ShowError(ex);
-					Close();
-				}
-			}
-			
-			versionController = new DBVersionController(localServer);
-			try
-			{
-				versionController.Run();
-			}
-			catch(Exception ex)
-			{
-				ShowError(ex);
-				Close();
-			}
-			#endregion
-
-			try
-			{
-				await appViewModel.LoadAsync("");
-			}
-			catch(Exception ex)
-			{
-				ShowError(ex);
-				Close();
-			}
-			DataContext = appViewModel;
-		}
-
-
+		
 		private bool OnEditViewModel(IEnumerable<PropertyViewModel> Properties)
 		{
 			EditWindow editWindow;
@@ -94,17 +60,31 @@ namespace NTRCheck
 		}
 		private void NewCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.Handled = true; e.CanExecute = (appViewModel?.CDRs==null) || (appViewModel?.CDRs?.Status == Statuses.Idle); 
+			e.Handled = true; e.CanExecute = (CaseViewModel==null) || (CaseViewModel.CDRs.Status == Statuses.Idle); 
 		}
-
-		
+				
 		private async void NewCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
+			CaseViewModel newCase;
+			PropertyViewModelCollection<CaseViewModel> properties;
+			EditWindow editWindow;
+
+
 			try
 			{
-				appViewModel.CurrentCase= await appViewModel.Cases.AddAsync(OnEditViewModel);
-				appViewModel.CDRs = new CDRViewModelCollection(logger, localServer);
-				await appViewModel.CDRs.LoadAsync(appViewModel.CurrentCase);
+				newCase = new CaseViewModel(logger);
+				await newCase.LoadAsync(new Case());
+
+				properties = new PropertyViewModelCollection<CaseViewModel>(logger);
+				await properties.LoadAsync();
+				await properties.ReadComponentsAsync(newCase);
+				editWindow = new EditWindow() { Owner = this, DataContext = properties };
+
+				if (editWindow.ShowDialog() ?? false)
+				{
+					await properties.WriteComponentsAsync(newCase);
+					this.CaseViewModel = newCase;
+				}
 			}
 			catch (Exception ex)
 			{
@@ -115,50 +95,79 @@ namespace NTRCheck
 
 		private void OpenCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.Handled = true; e.CanExecute = (appViewModel?.CDRs == null) || (appViewModel?.CDRs?.Status == Statuses.Idle); 
+			e.Handled = true; e.CanExecute = (CaseViewModel == null) || (CaseViewModel.CDRs.Status == Statuses.Idle); 
 			return;
 		}
 
 
 		private async void OpenCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			OpenCaseWindow window;
+			OpenFileDialog window;
+			CaseViewModel newCaseViewModel;
 
 			try
 			{
-				window = new OpenCaseWindow();
-				window.Owner = this;
-				window.DataContext = appViewModel.Cases;
+				window = new OpenFileDialog();
+				window.DefaultExt = "xml";
+				window.FileName = "*.xml";
+				window.Filter = "xml files|*.xml|All files|*.*";
 				if (!window.ShowDialog() ?? false) return;
 
-				if (appViewModel.Cases.SelectedItem == null) return;
-				appViewModel.CurrentCase = appViewModel.Cases.SelectedItem;
+				newCaseViewModel = new CaseViewModel(logger);
+				await newCaseViewModel.LoadAsync(window.FileName);
 
-				appViewModel.CDRs = new CDRViewModelCollection(logger, localServer);
-				await appViewModel.CDRs.LoadAsync(appViewModel.CurrentCase);
-
+				this.CaseViewModel = newCaseViewModel;
 			}
-			catch (Exception ex)
+			catch(Exception ex)
 			{
 				ShowError(ex);
-				return;
 			}
 		}
+		private void SaveCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = (CaseViewModel != null) && (CaseViewModel.CDRs.Status == Statuses.Idle);
+			return;
+		}
 
+
+		private void SaveCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			SaveFileDialog window;
+
+			try
+			{
+				if (CaseViewModel.FileName == null)
+				{
+					window = new SaveFileDialog();
+					window.DefaultExt = "xml";
+					window.FileName="new case";
+					window.Filter = "xml files|*.xml|All files|*.*";
+					if (!window.ShowDialog() ?? false) return;
+
+					CaseViewModel.FileName = window.FileName;
+				}
+							
+				CaseViewModel.Save();
+			}
+			catch
+			{
+				CaseViewModel.ErrorMessage = "Failed to save";
+			}
+		}
 		private void StopCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.Handled = true; e.CanExecute = (appViewModel?.CDRs != null) && (appViewModel?.CDRs?.Status == Statuses.Running);
+			e.Handled = true; e.CanExecute = (CaseViewModel != null) && (CaseViewModel.CDRs.Status == Statuses.Running);
 		}
 
 
 		private async void StopCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			await appViewModel.CDRs.StopAsync();
+			await CaseViewModel.CDRs.StopAsync();
 		}
 
 		private void ImportCVSCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.Handled = true; e.CanExecute = (appViewModel?.CDRs!=null) && (appViewModel?.CDRs?.Status == Statuses.Idle) && (appViewModel?.CDRs?.IsLoading == false); 
+			e.Handled = true; e.CanExecute = (CaseViewModel !=null) && (CaseViewModel.CDRs.Status == Statuses.Idle) && (CaseViewModel.CDRs.IsLoading == false); 
 		}
 
 
@@ -175,18 +184,18 @@ namespace NTRCheck
 				window.EndDate = new DateTime(2018, 01, 17);
 				if (!window.ShowDialog() ?? false) return;
 
-				elapsed=await appViewModel.CDRs.ImportAsync(appViewModel.CurrentCase, window.StartDate, window.EndDate);
+				elapsed=await CaseViewModel.CDRs.ImportAsync(CaseViewModel.CreateServer(), window.StartDate, window.EndDate);
 				MessageBox.Show(this, $"CVS imported in {elapsed}", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
 			}
 			catch
 			{
-				appViewModel.CDRs.ErrorMessage = "Failed to import CVS";
+				CaseViewModel.CDRs.ErrorMessage = "Failed to import CVS";
 				return;
 			}
 		}
 		private void ClearCVSCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.Handled = true; e.CanExecute = appViewModel?.CDRs?.CanClear()??false;
+			e.Handled = true; e.CanExecute = (CaseViewModel!=null) && (CaseViewModel.CDRs.CanClear());
 		}
 
 		private bool ClearCallBack()
@@ -198,18 +207,18 @@ namespace NTRCheck
 
 			try
 			{
-				await appViewModel.CDRs.ClearAsync(appViewModel.CurrentCase, ClearCallBack);
+				await CaseViewModel.CDRs.ClearAsync(ClearCallBack);
 			}
 			catch
 			{
-				appViewModel.CDRs.ErrorMessage = "Failed to clear CVS";
+				CaseViewModel.CDRs.ErrorMessage = "Failed to clear CVS";
 				return;
 			}
 		}
 
 		private void AssociateCVSCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.Handled = true; e.CanExecute = appViewModel?.CDRs?.CanClear() ?? false;
+			e.Handled = true; e.CanExecute = CaseViewModel?.CDRs?.CanClear() ?? false;
 		}
 
 		
@@ -219,12 +228,35 @@ namespace NTRCheck
 
 			try
 			{
-				elapsed=await appViewModel.CDRs.AssociateAsync();
+				elapsed=await CaseViewModel.CDRs.AssociateAsync();
 				MessageBox.Show(this, $"CVS associated in {elapsed}", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
 			}
 			catch
 			{
-				appViewModel.CDRs.ErrorMessage = "Failed to associate CVS";
+				CaseViewModel.CDRs.ErrorMessage = "Failed to associate CVS";
+				return;
+			}
+		}
+
+
+		private void AnalyseCVSCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = CaseViewModel?.CDRs?.CanClear() ?? false;
+		}
+
+
+		private async void AnalyseCVSCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			TimeSpan elapsed;
+
+			try
+			{
+				elapsed = await CaseViewModel.CDRs.AnalyseAsync();
+				MessageBox.Show(this, $"CVS analysed in {elapsed}", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+			}
+			catch
+			{
+				CaseViewModel.CDRs.ErrorMessage = "Failed to analyse CVS";
 				return;
 			}
 		}

@@ -12,7 +12,7 @@ namespace NTRCheck.ViewModels
 {
 	public class CaseViewModelCollection : BaseViewModelCollection<CaseViewModel, Case>
 	{
-		public CaseViewModelCollection(ILogger Logger, IServer Server) : base(Logger,Server )
+		public CaseViewModelCollection(ILogger Logger) : base(Logger)
 		{
 		
 		}
@@ -24,7 +24,7 @@ namespace NTRCheck.ViewModels
 
 		
 
-		public virtual async Task LoadAsync()
+		/*public virtual async Task LoadAsync()
 		{
 			IEnumerable<Case> model;
 
@@ -38,7 +38,7 @@ namespace NTRCheck.ViewModels
 				throw (ex);
 			}
 			await LoadAsync(model);
-		}
+		}*/
 
 
 	}

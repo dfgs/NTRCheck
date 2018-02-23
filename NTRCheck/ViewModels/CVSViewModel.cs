@@ -10,23 +10,9 @@ using ViewModelLib;
 
 namespace NTRCheck.ViewModels
 {
-	public abstract class CVSViewModel : ViewModel<CVS>
+	public class CVSViewModel : ViewModel<CVS>
 	{
-		public int? CVSID
-		{
-			get { return Model.CVSID; }
-			set { Model.CVSID = value; OnPropertyChanged(); }
-		}
-		public int? CaseID
-		{
-			get { return Model.CaseID; }
-			set { Model.CaseID = value; OnPropertyChanged(); }
-		}
-		public int? ParentCVSID
-		{
-			get { return Model.ParentCVSID; }
-			set { Model.ParentCVSID = value; OnPropertyChanged(); }
-		}
+		
 
 		public int? CVSKEY
 		{
@@ -83,7 +69,17 @@ namespace NTRCheck.ViewModels
 			set { Model.CVSC05=value;OnPropertyChanged(); }
 		}
 
-		
+		public CVSStatuses Status
+		{
+			get { return Model.Status; }
+			set { Model.Status = value; OnPropertyChanged(); }
+		}
+
+		public CVSViewModelCollection VOXs
+		{
+			get;
+			private set;
+		}
 
 		/*public IServer Server
 		{
@@ -93,9 +89,16 @@ namespace NTRCheck.ViewModels
 
 		public CVSViewModel(ILogger Logger) : base(Logger)
 		{
-			//this.Server = Server;
+			VOXs = new CVSViewModelCollection(Logger);
+
 		}
-		
+
+		protected override async Task OnLoadedAsync(CVS Model)
+		{
+			await base.OnLoadedAsync(Model);
+			await VOXs.LoadAsync(Model.VOXs);
+		}
+
 
 	}
 }

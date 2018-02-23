@@ -34,7 +34,28 @@ namespace NTRCheck.Views
 			InitializeComponent();
 		}
 
-		
+		private bool OnRemoveViewModel(IEnumerable<PropertyViewModel> Properties)
+		{
+			return MessageBox.Show(Application.Current.MainWindow, "Do you want to delete this item(s)", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+		}
+
+
+		private void RemoveCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = ViewModelCollection?.CanRemove() ?? false;
+		}
+
+		private async void RemoveCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			try
+			{
+				await ViewModelCollection.RemoveAsync(OnRemoveViewModel);
+			}
+			catch
+			{
+				ViewModelCollection.ErrorMessage = "Failed to remove item";
+			}
+		}
 
 
 

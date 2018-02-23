@@ -39,21 +39,18 @@ namespace NTRCheck.ViewModels
 
 		protected override async Task OnAddModelAsync(ModelType Model, int Index)
 		{
-			object key;
-
-			await Task.Run( ()=> {
-				key=Server.ExecuteTransaction(new Insert<ModelType>(Model), new SelectIdentity());
-				Table<ModelType>.PrimaryKey.SetValue(Model, Convert.ToInt32( key));
-			});
+			IList<ModelType> source;
+			source = (IList<ModelType>)this.Model;
+			await Task.Run(() => source.Insert(Index, Model));
 		}
 		protected override async Task OnRemoveModelAsync(ModelType Model, int Index)
 		{
-			await Task.Run(() => Server.ExecuteNonQuery(new Delete<ModelType>(Model)));
+			throw (new NotImplementedException());
 		}
 		protected override async Task OnEditModelAsync(ModelType Model, int Index)
 		{
-			await Task.Run(() => Server.ExecuteNonQuery(new Update<ModelType>(Model)));
+			throw (new NotImplementedException());
 		}
-		
+
 	}
 }

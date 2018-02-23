@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace NTRCheck.Models
 {
 	public class Case
 	{
 
-		public static readonly Column<Case, int?> CaseIDColumn = new Column<Case, int?>() {IsPrimaryKey=true,IsIdentity=true } ;
+		public static readonly Column<Case, int?> CaseIDColumn = new Column<Case, int?>() { DefaultValue=0,IsPrimaryKey=true };
+		[XmlIgnore]
 		public int? CaseID
 		{
 			get { return CaseIDColumn.GetValue(this); }
@@ -18,7 +20,9 @@ namespace NTRCheck.Models
 		}
 
 
-		public static readonly Column<Case, string> DescriptionColumn = new Column<Case, string>() { DefaultValue="New case" };
+
+		public static readonly Column<Case, string> DescriptionColumn = new Column<Case, string>() { DefaultValue = "New case" };
+		[XmlAttribute]
 		public string Description
 		{
 			get { return DescriptionColumn.GetValue(this); }
@@ -27,6 +31,7 @@ namespace NTRCheck.Models
 
 
 		public static readonly Column<Case, string> CoreHostNameColumn = new Column<Case, string>() { DefaultValue = "localhost" };
+		[XmlAttribute]
 		public string CoreHostName
 		{
 			get { return CoreHostNameColumn.GetValue(this); }
@@ -34,7 +39,8 @@ namespace NTRCheck.Models
 		}
 
 
-		public static readonly Column<Case, string> MySqlLoginColumn = new Column<Case, string>() {DefaultValue="service" };
+		public static readonly Column<Case, string> MySqlLoginColumn = new Column<Case, string>() { DefaultValue = "service" };
+		[XmlAttribute]
 		public string MySqlLogin
 		{
 			get { return MySqlLoginColumn.GetValue(this); }
@@ -43,6 +49,7 @@ namespace NTRCheck.Models
 
 
 		public static readonly Column<Case, string> MySqlPasswordColumn = new Column<Case, string>() { DefaultValue = "service" };
+		[XmlAttribute]
 		public string MySqlPassword
 		{
 			get { return MySqlPasswordColumn.GetValue(this); }
@@ -50,7 +57,18 @@ namespace NTRCheck.Models
 		}
 
 
+		public List<CVS> CDRs
+		{
+			get;
+			set;
+		}
 
+		public Case()
+		{
+			CDRs = new List<CVS>();
+		}
 
 	}
+
+
 }
