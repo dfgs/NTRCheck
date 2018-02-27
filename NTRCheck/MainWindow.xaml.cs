@@ -75,10 +75,10 @@ namespace NTRCheck
 				newCase = new CaseViewModel(logger);
 				await newCase.LoadAsync(new Case());
 
-				properties = new PropertyViewModelCollection<CaseViewModel>(logger);
+				properties = new PropertyViewModelCollection<CaseViewModel>(logger,null);
 				await properties.LoadAsync();
 				await properties.ReadComponentsAsync(newCase);
-				editWindow = new EditWindow() { Owner = this, DataContext = properties };
+				editWindow = new EditWindow() { Owner = this, PropertyViewModelCollection = properties };
 
 				if (editWindow.ShowDialog() ?? false)
 				{

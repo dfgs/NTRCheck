@@ -63,9 +63,16 @@ namespace NTRCheck.Models
 			set;
 		}
 
+		public List<ViewFilter> Filters
+		{
+			get;
+			set;
+		}
+
 		public Case()
 		{
 			CDRs = new List<CVS>();
+			Filters = new List<ViewFilter>();
 		}
 
 	}

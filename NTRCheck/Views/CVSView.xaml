@@ -44,11 +44,11 @@
 
 	
 	<DockPanel DataContext="{Binding ElementName=root,Path=ViewModelCollection}">
-		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+		<!--StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
 			<Button ToolTip="Remove" Command="{StaticResource remove}">
 				<Image Source="/NTRCheck;component/Images/delete.png" Stretch="None"/>
 			</Button>
-		</StackPanel>
+		</-->
 		<ViewLib:ErrorView DockPanel.Dock="Top" ErrorMessage="{Binding ErrorMessage,Mode=TwoWay}" />
 		<ListView ItemsSource="{Binding}" SelectedItem="{Binding SelectedItem}" ViewLib:Sort.IsEnabled="True">
 			<ListView.ItemContainerStyle>

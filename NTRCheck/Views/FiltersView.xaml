@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="NTRCheck.Views.FiltersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Views="clr-namespace:NTRCheck.Views"
+			 xmlns:ViewLib="clr-namespace:ViewLib;assembly=ViewLib"
+			 xmlns:ViewModels="clr-namespace:NTRCheck.ViewModels"
+             mc:Ignorable="d" x:Name="root"
+             d:DesignWidth="300">
+	<UserControl.Resources>
+		<RoutedCommand x:Key="add"/>
+		<RoutedCommand x:Key="remove"/>
+		<RoutedCommand x:Key="refresh"/>
+
+		<Style TargetType="{x:Type ViewLib:TagView}">
+			<Setter Property="Foreground" Value="Black"/>
+			<Setter Property="Background" Value="LightGray"/>
+			<Setter Property="MinWidth" Value="40"/>
+			<Setter Property="TagBrush" Value="Goldenrod"/>
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding IsSelected}" Value="true">
+					<Setter Property="Foreground" Value="White"/>
+					<Setter Property="Background" Value="Gray"/>
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>
+
+		<DataTemplate DataType="{x:Type ViewModels:ViewFilterViewModel}">
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="{Binding ColumnName}"/>
+				<TextBlock Text=" "/>
+				<TextBlock Text="{Binding Operator.Symbol}"/>
+				<TextBlock Text=" "/>
+				<TextBlock Text="{Binding Value}"/>
+			</StackPanel>
+		</DataTemplate>
+	</UserControl.Resources>
+	
+	<UserControl.InputBindings>
+		<KeyBinding Command="{StaticResource remove}" Key="Delete"/>
+	</UserControl.InputBindings>
+
+	<UserControl.CommandBindings>
+		<CommandBinding Command="{StaticResource add}" CanExecute="AddCommandBinding_CanExecute" Executed="AddCommandBinding_Executed"/>
+		<CommandBinding Command="{StaticResource remove}" CanExecute="RemoveCommandBinding_CanExecute" Executed="RemoveCommandBinding_Executed"/>
+		<CommandBinding Command="{StaticResource refresh}" CanExecute="RefreshCommandBinding_CanExecute" Executed="RefreshCommandBinding_Executed"/>
+	</UserControl.CommandBindings>
+
+	
+	<DockPanel DataContext="{Binding ElementName=root}">
+		<!-- Binding bug do not change error view-->
+		<ViewLib:ErrorView DockPanel.Dock="Top" DataContext="{Binding ViewModelCollection}" ErrorMessage="{Binding ErrorMessage,Mode=TwoWay}"/>
+		<Button DockPanel.Dock="Left" ToolTip="Add" Command="{StaticResource add}">
+			<Image Source="/NTRCheck;component/Images/add.png" Stretch="None"/>
+		</Button>
+		<Button DockPanel.Dock="Left" ToolTip="Remove" Command="{StaticResource remove}">
+			<Image Source="/NTRCheck;component/Images/delete.png" Stretch="None"/>
+		</Button>
+		<Button DockPanel.Dock="Right" ToolTip="Refresh" Command="{StaticResource refresh}">
+			<Image Source="/NTRCheck;component/Images/arrow-circle-double.png" Stretch="None"/>
+		</Button>
+		<ListBox Background="Transparent" BorderThickness="0" ItemsSource="{Binding ViewModelCollection}" SelectedItem="{Binding ViewModelCollection.SelectedItem}" MouseDoubleClick="ListBox_MouseDoubleClick">
+			<ListBox.ItemContainerStyle>
+				<Style TargetType="{x:Type ListBoxItem}">
+					<Setter Property="IsSelected" Value="{Binding IsSelected}"/>
+					<Setter Property="Template">
+						<Setter.Value>
+							<ControlTemplate>
+								<ViewLib:TagView Margin="2" FontSize="10" TagContent="{Binding}" TagBrush="LightSteelBlue"/>
+							</ControlTemplate>
+						</Setter.Value>
+					</Setter>
+				</Style>
+			</ListBox.ItemContainerStyle>
+			
+			<ListBox.ItemsPanel>
+				<ItemsPanelTemplate>
+					<StackPanel Orientation="Horizontal"/>
+				</ItemsPanelTemplate>
+			</ListBox.ItemsPanel>
+
+		</ListBox>
+	</DockPanel>
+</UserControl>

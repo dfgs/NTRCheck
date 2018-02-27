@@ -34,7 +34,7 @@ namespace NTRCheck.Views
 			InitializeComponent();
 		}
 
-		private bool OnRemoveViewModel(IEnumerable<PropertyViewModel> Properties)
+		private bool OnRemoveViewModel(IPropertyViewModelCollection Properties)
 		{
 			return MessageBox.Show(Application.Current.MainWindow, "Do you want to delete this item(s)", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
 		}

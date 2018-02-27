@@ -10,6 +10,7 @@
 
 	<DockPanel>
 		<ViewLib:ErrorView DockPanel.Dock="Top" ErrorMessage="{Binding ErrorMessage,Mode=TwoWay}"/>
+		<Views:FiltersView DockPanel.Dock="Top" ViewModelCollection="{Binding Filters}" ItemsSource="{Binding CDRs}"/>
 		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*"/>

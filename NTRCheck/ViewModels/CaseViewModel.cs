@@ -61,17 +61,23 @@ namespace NTRCheck.ViewModels
 			private set;
 		}
 
-
+		public ViewFilterViewModelCollection Filters
+		{
+			get;
+			private set;
+		}
 
 		public CaseViewModel(ILogger Logger) : base(Logger)
 		{
 			CDRs = new CVSViewModelCollection(Logger);
+			Filters = new ViewFilterViewModelCollection(Logger);
 		}
 
 		protected override async Task OnLoadedAsync(Case Model)
 		{
 			await base.OnLoadedAsync(Model);
 			await CDRs.LoadAsync(Model.CDRs);
+			await Filters.LoadAsync(Model.Filters);
 		}
 
 

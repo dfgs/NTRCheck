@@ -59,17 +59,24 @@
     </Compile>
     <Compile Include="Models\CVS.cs" />
     <Compile Include="Models\CVSStatuses.cs" />
+    <Compile Include="Models\ViewFilter.cs" />
+    <Compile Include="Models\ViewFilterOperator.cs" />
     <Compile Include="ViewModels\CaseViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModelCollection.cs" />
     <Compile Include="ViewModels\CVSViewModelCollection.cs" />
     <Compile Include="ViewModels\CaseViewModelCollection.cs" />
     <Compile Include="ViewModels\CVSViewModel.cs" />
     <Compile Include="ViewModels\Statuses.cs" />
+    <Compile Include="ViewModels\ViewFilterViewModel.cs" />
+    <Compile Include="ViewModels\ViewFilterViewModelCollection.cs" />
     <Compile Include="Views\CVSView.xaml.cs">
       <DependentUpon>CVSView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CaseView.xaml.cs">
       <DependentUpon>CaseView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FiltersView.xaml.cs">
+      <DependentUpon>FiltersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Test.xaml.cs">
       <DependentUpon>Test.xaml</DependentUpon>
@@ -95,6 +102,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CaseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FiltersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -184,6 +195,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\bug.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\arrow-circle-double.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
