@@ -27,7 +27,7 @@
 		</Style>
 
 		<DataTemplate DataType="{x:Type ViewModels:ViewFilterViewModel}">
-			<StackPanel Orientation="Horizontal">
+			<StackPanel Orientation="Horizontal" Margin="4,0,4,0">
 				<TextBlock Text="{Binding ColumnName}"/>
 				<TextBlock Text=" "/>
 				<TextBlock Text="{Binding Operator.Symbol}"/>
@@ -51,6 +51,7 @@
 	<DockPanel DataContext="{Binding ElementName=root}">
 		<!-- Binding bug do not change error view-->
 		<ViewLib:ErrorView DockPanel.Dock="Top" DataContext="{Binding ViewModelCollection}" ErrorMessage="{Binding ErrorMessage,Mode=TwoWay}"/>
+		<TextBlock DockPanel.Dock="Left" Margin="0,0,4,0" Text="Filters" VerticalAlignment="Center" FontWeight="Bold"/>
 		<Button DockPanel.Dock="Left" ToolTip="Add" Command="{StaticResource add}">
 			<Image Source="/NTRCheck;component/Images/add.png" Stretch="None"/>
 		</Button>

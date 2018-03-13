@@ -114,9 +114,11 @@ namespace NTRCheck
 				if (!window.ShowDialog() ?? false) return;
 
 				newCaseViewModel = new CaseViewModel(logger);
+				this.CaseViewModel = newCaseViewModel;
+
 				await newCaseViewModel.LoadAsync(window.FileName);
 
-				this.CaseViewModel = newCaseViewModel;
+				
 			}
 			catch(Exception ex)
 			{

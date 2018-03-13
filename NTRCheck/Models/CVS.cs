@@ -93,11 +93,16 @@ namespace NTRCheck.Models
 		}
 
 
+
+		public static readonly Column<CVS, CVSStatuses> StatusColumn = new Column<CVS, CVSStatuses>();
+		[XmlElement(IsNullable = false)]
 		public CVSStatuses Status
 		{
-			get;
-			set;
+			get { return StatusColumn.GetValue(this); }
+			set { StatusColumn.SetValue(this, value); }
 		}
+
+
 
 
 		public List<CVS> VOXs

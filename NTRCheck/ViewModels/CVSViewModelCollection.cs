@@ -29,7 +29,7 @@ namespace NTRCheck.ViewModels
 		public double Progress
 		{
 			get { return (double)GetValue(ProgressProperty); }
-			private set { SetValue(ProgressProperty, value); }
+			set { SetValue(ProgressProperty, value); }
 		}
 
 
@@ -179,6 +179,8 @@ namespace NTRCheck.ViewModels
 					Progress = 100 * index / Count;
 
 					vox = this[index];
+					vox.Status = CVSStatuses.Unknown;
+
 					if (vox.CVSTYP == "CDR")
 					{
 						index++;
@@ -249,6 +251,10 @@ namespace NTRCheck.ViewModels
 							{
 								vox.Status = CVSStatuses.Invalid;
 								cdr.Status = CVSStatuses.Invalid;
+							}
+							else
+							{
+								vox.Status = CVSStatuses.Valid;
 							}
 						}
 

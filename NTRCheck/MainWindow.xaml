@@ -84,7 +84,10 @@
 							<DataTrigger Binding="{Binding CDRs.Status}" Value="Running">
 								<Setter Property="Visibility" Value="Visible"/>
 							</DataTrigger>
-							
+
+							<DataTrigger Binding="{Binding CDRs.Status}" Value="Loading">
+								<Setter Property="Visibility" Value="Visible"/>
+							</DataTrigger>
 						</Style.Triggers>
 					</Style>
 				</StackPanel.Style>

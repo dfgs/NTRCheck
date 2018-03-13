@@ -49,9 +49,10 @@ namespace NTRCheck.ViewModels
 			source = (IList<ModelType>)this.Model;
 			await Task.Run(() => source.RemoveAt(Index));
 		}
-		protected override Task OnEditModelAsync(ModelType Model, int Index)
+		protected override async Task OnEditModelAsync(ModelType Model, int Index)
 		{
-			throw (new NotImplementedException());
+			//throw (new NotImplementedException());
+			await Task.Yield();
 		}
 
 	}

@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace NTRCheck.ViewModels
 {
-	public enum Statuses { Idle,Running,Stopping };
+	public enum Statuses { Idle,Running,Loading,Stopping };
 }

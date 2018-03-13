@@ -36,7 +36,7 @@ namespace NTRCheck.ViewModels
 		[Editable(Header = "Core hostname", IsMandatory = true)]
 		public string CoreHostName
 		{
-			get { return Model.CoreHostName; }
+			get { return Model?.CoreHostName; }
 			set { Model.CoreHostName = value; OnPropertyChanged(); }
 		}
 
@@ -80,21 +80,40 @@ namespace NTRCheck.ViewModels
 			await Filters.LoadAsync(Model.Filters);
 		}
 
+		private async Task LoadModelAsync(Stream Stream)
+		{
+			Case model = null;
+
+			XmlSerializer serializer;
+
+			serializer = new XmlSerializer(typeof(Case));
+			await Task.Run(() =>
+			{
+				model=(Case)serializer.Deserialize(Stream);
+			});
+			await LoadAsync(model);
+		}
+
+		private async Task UpdateLoadProgressAsync(Stream Stream)
+		{
+			while(Stream.Position<Stream.Length)
+			{
+				CDRs.Progress = 100 * Stream.Position / Stream.Length;
+				await Task.Delay(100);
+			}
+		}
 
 		public async Task LoadAsync(string FileName)
 		{
-			XmlSerializer serializer;
-			Case model;
-
 			this.FileName = FileName;
 			try
 			{
+				CDRs.Status = Statuses.Loading;
 				using (FileStream stream = new FileStream(FileName, FileMode.Open))
 				{
-					serializer = new XmlSerializer(typeof(Case));
-					model=(Case)serializer.Deserialize(stream);
-					stream.Flush();
+					await Task.WhenAll( LoadModelAsync(stream),UpdateLoadProgressAsync(stream));
 				}
+				//await Task.Delay(5000);
 			}
 			catch (Exception ex)
 			{
@@ -103,8 +122,8 @@ namespace NTRCheck.ViewModels
 			}
 			finally
 			{
+				CDRs.Status = Statuses.Idle;
 			}
-			await LoadAsync(model);
 		}
 
 		public IServer CreateServer()
